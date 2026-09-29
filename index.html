@@ -373,7 +373,7 @@ Prices are expressed in Vietnamese dong (VND).
     }
 
     window.gtag = () => null
-    window.PAGE = {MAIN: 0, EDIT: 1, SHARED: 2, SINGLE: 3, MAXI: 4}
+    window.PAGE = {MAIN: 0, EDIT: 1, SHARED: 2, SINGLE: 3, MAXI: 4, PROFILE: 5}
 
     const VER_WASM = '1790689454640'
     const URL_WASM = `/durian.rent.wasm?v=${VER_WASM}`
@@ -1625,6 +1625,164 @@ Prices are expressed in Vietnamese dong (VND).
             background: var(--deep-color);
             color: var(--on-deep-color);
         }
+        #profile {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: var(--tabbar-height);
+            left: 0;
+            overflow-y: auto;
+            background: var(--sheet-color);
+            color: var(--text-color);
+        }
+        .profile {
+            position: absolute;
+            inset: 0;
+            box-sizing: border-box;
+            padding: var(--offset-big) var(--offset-middle);
+            display: flex;
+            flex-direction: column;
+            gap: var(--offset-big);
+            font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        }
+        .profile h1 {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.2;
+        }
+        .signin {
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--offset-middle);
+            text-align: center;
+        }
+        .signin .lead {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+        .google {
+            display: flex;
+            justify-content: center;
+        }
+        .hint {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--text-muted);
+        }
+        .muted {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .link {
+            border: 0;
+            background: none;
+            padding: 0;
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+            color: var(--text-color);
+            font: inherit;
+        }
+        .stats {
+            padding: var(--offset-middle);
+            display: flex;
+            flex-direction: column;
+            gap: var(--offset-small);
+            border-radius: var(--radius-big);
+            background: var(--card-background-color);
+            box-shadow: var(--shadow);
+        }
+        .total {
+            margin: 0;
+            font-size: 34px;
+            line-height: 1.05;
+            font-variant-numeric: tabular-nums;
+        }
+        .total small {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        .chart {
+            height: 96px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        .chart i {
+            width: 2.4%;
+            background: var(--text-muted);
+            border-radius: var(--radius-small) var(--radius-small) 0 0;
+        }
+        .axis {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .places {
+            display: flex;
+            flex-direction: column;
+            gap: var(--offset-small);
+        }
+        .places h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+        .place {
+            padding: var(--offset-small);
+            display: grid;
+            grid-template-columns: 24% minmax(0, 1fr);
+            align-items: center;
+            gap: var(--offset-middle);
+            border-radius: var(--radius-big);
+            background: var(--card-background-color);
+            box-shadow: var(--shadow);
+        }
+        .place img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: var(--radius-small);
+        }
+        .place div {
+            display: flex;
+            flex-direction: column;
+            gap: var(--offset-small);
+        }
+        .place b {
+            font-size: 15px;
+            line-height: 1.3;
+        }
+        .cost {
+            font-size: 17px;
+            font-variant-numeric: tabular-nums;
+        }
+        .cost small, .eye {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .eye {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--offset-small);
+            font-variant-numeric: tabular-nums;
+        }
+        .eye svg {
+            width: 16px;
+            height: 16px;
+        }
+        @media (min-width: 900px) {
+            #profile {
+                right: auto;
+                width: 420px;
+                box-shadow: var(--shadow);
+            }
+        }
         #toast {
             position: fixed;
             top: calc(env(safe-area-inset-top, 0px) + var(--offset-middle));
@@ -1913,8 +2071,43 @@ Prices are expressed in Vietnamese dong (VND).
     </section>
     <p class="maxi_source">Source: <a class="maxi_link" target="_blank">Chợ Tốt</a></p>
 </div>
+<div id="profile" hidden>
+    <div class="profile" data-view="signin">
+        <div class="signin">
+            <h1>Your places</h1>
+            <p class="lead">Sign in to post a place and see how many people open it.</p>
+            <div class="google" id="profile_google" hidden>
+                <div id="g_id_onload" data-callback="profile_google_credential" data-auto_prompt="false"></div>
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-size="large" data-text="continue_with"></div>
+            </div>
+            <p class="hint" id="profile_hint"></p>
+        </div>
+    </div>
+    <div class="profile" data-view="places" hidden>
+        <div>
+            <h1>Your places</h1>
+            <p class="muted">Signed in with Google · <button type="button" class="link" data-action="sign-out">Sign out</button></p>
+        </div>
+        <section class="stats">
+            <p class="total"><span id="profile_total">0</span> <small>views of your places</small></p>
+            <div class="chart" id="profile_chart" aria-label="Views per day, last 30 days"></div>
+            <div class="axis"><span>Last 30 days</span><span>Today</span></div>
+        </section>
+        <section class="places">
+            <h2 id="profile_count"></h2>
+            <div id="profile_list"></div>
+        </section>
+    </div>
+</div>
 <div id="toast" hidden></div>
 <script>
+const GOOGLE_CLIENT_ID = '871164431726-o6uh5hnt20i0bbv6lss6q0uqs4384skl.apps.googleusercontent.com'
+const API_ORIGIN = 'https://api.durian.rent'
+const $profile = document.getElementById('profile')
+const $profile_google = document.getElementById('profile_google')
+const $profile_hint = document.getElementById('profile_hint')
+const $profile_chart = document.getElementById('profile_chart')
+const $profile_list = document.getElementById('profile_list')
 const $filters = document.getElementById('filters')
 const $close = document.getElementById('close')
 const $heart = document.getElementById('heart')
@@ -1949,6 +2142,15 @@ const router = () => {
     if (!maxi_closed) {
         current_page = location.pathname.split('/')[1] == 'id' ? PAGE.SINGLE : PAGE.MAIN
         return maxi_close()
+    }
+    if (history.state?.page == PAGE.PROFILE) {
+        if (!profile_started) return history.back()
+        current_page = PAGE.PROFILE
+        return profile_open()
+    }
+    if (!profile_closed) {
+        current_page = location.pathname.split('/')[1] == 'id' ? PAGE.SINGLE : PAGE.MAIN
+        return profile_close()
     }
     const pathname = location.pathname.split('/')
     search_params = new URLSearchParams(location.search)
@@ -2334,6 +2536,8 @@ var photo_swipe
 var card_moved = false
 var card_closed = true
 var maxi_closed = true
+var profile_closed = true
+var profile_started = false
 
 $card.ontouchstart = e => {
     e.stopPropagation()
@@ -2638,6 +2842,123 @@ function maxi_close() {
     $maxi.style.transform = `translate3d(0, ${$maxi.clientHeight}px, 0)`
 }
 
+function profile_hint(text) {
+    $profile_hint.textContent = text
+}
+
+function profile_show_signin() {
+    $profile.querySelector('[data-view="places"]').hidden = true
+    $profile.querySelector('[data-view="signin"]').hidden = false
+    profile_hint('')
+}
+
+function profile_show_places() {
+    $profile.querySelector('[data-view="signin"]').hidden = true
+    $profile.querySelector('[data-view="places"]').hidden = false
+    profile_load()
+}
+
+function profile_open() {
+    $profile.style.transition = 'none'
+    $profile.style.transform = 'translate3d(0,0,0)'
+    $profile.removeAttribute('hidden')
+    profile_closed = false
+    $tabbar.querySelector('[data-tab="map"]').classList.remove('on')
+    $tabbar.querySelector('[data-tab="saved"]').classList.remove('on')
+    $tabbar.querySelector('[data-tab="profile"]').classList.add('on')
+    localStorage.token ? profile_show_places() : profile_show_signin()
+    profile_load_google()
+}
+
+function profile_close() {
+    profile_closed = true
+    $profile.style.transition = 'transform 0.1s linear'
+    $profile.style.transform = `translate3d(0, ${$profile.clientHeight}px, 0)`
+    $tabbar.querySelector('[data-tab="profile"]').classList.remove('on')
+    $tabbar.querySelector('[data-tab="map"]').classList.add('on')
+}
+
+function profile_google_credential(response) {
+    fetch(`${API_ORIGIN}/auth/google`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify({credential: response.credential})
+    })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => {
+        localStorage.token = data.token
+        profile_show_places()
+    })
+    .catch(() => profile_hint('Could not sign in with Google. Try again.'))
+}
+
+function profile_load_google() {
+    if (!GOOGLE_CLIENT_ID || $profile_google.dataset.ready) return
+    $profile_google.dataset.ready = '1'
+    document.getElementById('g_id_onload').dataset.client_id = GOOGLE_CLIENT_ID
+    const $script = document.createElement('script')
+    $script.src = 'https://accounts.google.com/gsi/client?hl=en'
+    document.head.appendChild($script)
+    $profile_google.hidden = false
+}
+
+function profile_sign_out() {
+    delete localStorage.token
+    profile_show_signin()
+}
+
+function profile_load() {
+    const auth = {headers: {authorization: `Bearer ${localStorage.token}`}}
+    Promise.all([
+        fetch(`${API_ORIGIN}/me/stats?days=30`, auth),
+        fetch(`${API_ORIGIN}/me/listings`, auth)
+    ])
+    .then(([statsRes, listingsRes]) => {
+        if (statsRes.status == 401 || listingsRes.status == 401) return profile_sign_out()
+        return Promise.all([statsRes.json(), listingsRes.json()])
+    })
+    .then(result => {
+        if (!result) return
+        profile_render_stats(result[0])
+        profile_render_listings(result[1])
+    })
+}
+
+function profile_render_stats(stats) {
+    document.getElementById('profile_total').textContent = stats.total
+    const max = Math.max(1, ...stats.days.map(d => d.count))
+    $profile_chart.innerHTML = stats.days.map(d => `<i style="height: ${Math.round(d.count / max * 100)}%"></i>`).join('')
+}
+
+const PROFILE_KIND = {apartment: 'Apartment', house: 'House', room: 'Room', office: 'Office', land: 'Land Plot'}
+const PROFILE_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>'
+
+function profile_listing_title(listing) {
+    const kind = PROFILE_KIND[listing.kind] || listing.kind
+    const district = listing.district ? get_area_v2_for_user(Number(listing.district)) : ''
+    const place = district ? ` in ${district}` : ''
+    if (kind != 'Apartment' && kind != 'House') return `${kind}${place}`
+    return listing.bedrooms > 0 ? `${listing.bedrooms}-bedroom ${kind.toLowerCase()}${place}` : `Studio${place}`
+}
+
+function profile_price(amount) {
+    return String(amount).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+}
+
+function profile_render_listings(listings) {
+    document.getElementById('profile_count').textContent = listings.length
+        ? `${listings.length} place${listings.length == 1 ? '' : 's'}`
+        : 'No places yet'
+    $profile_list.innerHTML = listings.map(listing => {
+        const fresh = Date.now() - listing.created_at < 86400000
+        return `<div class="place"><img src="${API_ORIGIN}/photos/${listing.photos[0] || ''}" alt=""><div><b>${profile_listing_title(listing)}</b><span class="cost">${profile_price(listing.price)} ₫<small> /mo</small></span><span class="eye">${PROFILE_EYE}${listing.views} views${fresh ? ' · published today' : ''}</span></div></div>`
+    }).join('')
+}
+
+$profile.onclick = e => {
+    if (e.target.closest('[data-action="sign-out"]')) profile_sign_out()
+}
+
 $maxi.onclick = e => {
     if (e.target.closest('.maxi_close')) return history.back()
     if (e.target.closest('.card_heart')) return toggle_like(Number($maxi.dataset.id))
@@ -2887,8 +3208,17 @@ const $tabbar = document.getElementById('tabbar')
 $tabbar.onclick = e => {
     const $tab = e.target.closest('[data-tab]')
     if (!$tab) return
+    if (current_page == PAGE.PROFILE) {
+        if ($tab.dataset.tab != 'profile') history.back()
+        return
+    }
     if ($tab.dataset.tab == 'saved') $heart.onpointerup(e)
     if ($tab.dataset.tab == 'filters') toggler.onpointerup(e)
+    if ($tab.dataset.tab == 'profile') {
+        profile_started = true
+        history.pushState({page: PAGE.PROFILE}, '')
+        return router()
+    }
     const likes = new URL(location).searchParams.has('likes')
     $tabbar.querySelector('[data-tab="map"]').classList.toggle('on', !likes)
     $tabbar.querySelector('[data-tab="saved"]').classList.toggle('on', likes)
